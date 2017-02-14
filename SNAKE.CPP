@@ -3,31 +3,31 @@
 #include <dos.h>
 #include <stdlib.h>
 
-#define MAX_X 80
-#define MIN_X 1
-#define MAX_Y 50
-#define MIN_Y 1
+#define MAX_X 80         //maximum horizontal coordinate of screen
+#define MIN_X 1          //minimum horizontal coordinate of screen
+#define MAX_Y 49         //maximum vertical coordinate of screen(set this to 1 less than the actual value for your screen)
+#define MIN_Y 1          //minimum vertical coordinate of screen
 #define ARR_X (MAX_X - MIN_X + 2)
-#define ARR_Y (MAX_Y - MIN_Y + 2)
+#define ARR_Y (MAX_Y - MIN_Y + 2) //dimensions of pos_key matrix
 
 
-char pos_key[ARR_X][ARR_Y];
+char pos_key[ARR_X][ARR_Y];  //matrix corresponding to every position on the screen
 
-void keystroke();
-void adjustxy(int&, int&);
+void keystroke();          //function which receives and maps keystrokes and decides the corresponding movement
+void adjustxy(int&, int&); //helps in swapping screen sides when snake reaches one edge of screen
 void movehead(int, int);
 void movetail(char [ARR_X][ARR_Y]);
 void addfood();
-int checkfood();
-int checkdie();
-void printgameover();
-char getdir();
+int checkfood();           //checks if snake has eate food or not
+int checkdie();            //checks if snake has bitten itself or not
+void printgameover();      //terminates game if checkdie() is true
+char getdir();             //converts arrow key input to alphabets
 
 int x=(MAX_X - MIN_X + 1)/2, y=(MAX_Y - MIN_Y + 1)/2;       //head coordinates
 int x1, y1;   //tail coordinates
 int x2, y2;   //food coordinates
 int snaklen = 1;
-int frame_width = 150;
+int frame_width = 150;   //sets default game speed
 
 
 void main()
@@ -165,8 +165,8 @@ void main()
 			break;
 	}
 	goto flag3;
-
-
+  /////END OF WELCOME SCREEN/////
+  /////END OF MAIN/////
 }
 
 void keystroke()
@@ -316,14 +316,14 @@ void adjustxy(int &x, int &y)
 	else if (x == MIN_X - 1)
 		x=MAX_X;
 //	gotoxy(x, y);
-//	cout<<"@";//<<x<<", "<<y;
+//	cout<<"@";//<<x<<", "<<y;   //for testing purposes
 	return;
 }
 void movehead (int x, int y)
 {
 	gotoxy(x, y);
 	cout<<"@";
-//	delay(500);
+//	delay(500);                //for testing purposes
 }
 
 void movetail (char pos_key[ARR_X][ARR_Y])
@@ -370,7 +370,7 @@ void movetail (char pos_key[ARR_X][ARR_Y])
 		}
 
 	}
-//		delay(500);
+//		delay(500);    //for testing purposes
 		return;
 
 
