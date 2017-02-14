@@ -35,6 +35,13 @@ void main()
 	int choice;
 	char choice2;
 	flag3:
+	for(int l=0; l<arr_x; ++l)
+	{
+		for(int m=0; m<arr_y; ++m)
+		{
+			pos_key[l][m]='k';
+		}
+	}
 	clrscr();
 	gotoxy((max_x - min_x + 1)/2 - 10, (max_y - min_y + 1)/2 - 6);
 	cout<<"********************";
@@ -57,7 +64,7 @@ void main()
 	{
 		case 1 :
 			clrscr();
-			int x=(max_x - min_x + 1)/2, y=(max_y - min_y + 1)/2;
+			x=(max_x - min_x + 1)/2, y=(max_y - min_y + 1)/2;
 			addfood();
 			keystroke();
 			break;
