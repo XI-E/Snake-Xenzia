@@ -2,13 +2,8 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
-
-#define MAX_X 80         //maximum horizontal coordinate of screen
-#define MIN_X 1          //minimum horizontal coordinate of screen
-#define MAX_Y 49         //maximum vertical coordinate of screen(set this to 1 less than the actual value for your screen)
-#define MIN_Y 1          //minimum vertical coordinate of screen
-#define ARR_X (MAX_X - MIN_X + 2)
-#define ARR_Y (MAX_Y - MIN_Y + 2) //dimensions of pos_key matrix
+#define ARR_X 200
+#define ARR_Y 200 //dimensions of pos_key matrix
 
 
 char pos_key[ARR_X][ARR_Y];  //matrix corresponding to every position on the screen
@@ -22,16 +17,34 @@ int checkfood();           //checks if snake has eate food or not
 int checkdie();            //checks if snake has bitten itself or not
 void printgameover();      //terminates game if checkdie() is true
 char getdir();             //converts arrow key input to alphabets
+void screen();             //sets the screen parameters
+void frame();		   		//prints the borders of the screen
 
-int x=(MAX_X - MIN_X + 1)/2, y=(MAX_Y - MIN_Y + 1)/2;       //head coordinates
+
+int MAX_X;         //maximum horizontal coordinate of screen
+int MIN_X;         //minimum horizontal coordinate of screen
+int MAX_Y;         //maximum vertical coordinate of screen
+int MIN_Y;         //minimum vertical coordinate of screen
+int max_xs;
+int max_xm;
+int max_xl;
+int max_ys;
+int max_ym;
+int max_yl;
+int x, y;       //head coordinates
 int x1, y1;   //tail coordinates
 int x2, y2;   //food coordinates
 int snaklen = 1;
 int frame_width = 150;   //sets default game speed
+int counter = 0;   //records the no. of times the game is played
 
 
 void main()
 {
+	if(counter==0)
+	{
+		screen();
+	}
 ///////WELCOME SCREEN//////////
 	int choice;
 	char choice2;
@@ -43,7 +56,7 @@ void main()
 			pos_key[l][m]='k';
 		}
 	}
-	clrscr();
+	clrscr();   frame();
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 6);
 	cout<<"********************";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 4);
@@ -64,13 +77,13 @@ void main()
 	switch (choice)
 	{
 		case 1 :
-			clrscr();
+			clrscr();   frame();
 			x=(MAX_X - MIN_X + 1)/2, y=(MAX_Y - MIN_Y + 1)/2;
 			addfood();
 			keystroke();
 			break;
 		case 2 :
-			clrscr();
+			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 3, (MAX_Y - MIN_Y + 1)/2 - 3);
 			cout<<"CONTROLS";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 - 1);
@@ -84,7 +97,7 @@ void main()
 			break;
 		case 3 :
 			flag4:
-			clrscr();
+			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 3, (MAX_Y - MIN_Y + 1)/2 - 6);
 			cout<<"OPTIONS";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 - 4);
@@ -97,36 +110,42 @@ void main()
 			cout<<"1.3 Hard";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 1);
 			cout<<"2. Set screen size";
-			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 2);
+			gotoxy((MAX_X - MIN_X + 1)/2 - 5, (MAX_Y - MIN_Y + 1)/2 + 2);
+			cout<<"2.1 Small";
+			gotoxy((MAX_X - MIN_X + 1)/2 - 5, (MAX_Y - MIN_Y + 1)/2 + 3);
+			cout<<"2.2 Medium";
+			gotoxy((MAX_X - MIN_X + 1)/2 - 5, (MAX_Y - MIN_Y + 1)/2 + 4);
+			cout<<"2.3 Large";
+			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 6);
 			cout<<"3. Back to main menu";
-			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 4);
+			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 7);
 			cout<<"Enter your choice: ";
 			cin>>choice2;
 			switch (choice2)
 			{
 				case '1':
-					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 4);
+					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 7);
 					cout<<"Enter the subchoice (enter invalid";
-					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 5);
+					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 8);
 					cout<<" input to go back): 1.";
 					cin>>choice2;
 					switch(choice2)
 					{
 						case '1':
 							frame_width=150;
-							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 6);
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
 							cout<<"The difficulty level is now set to 'Easy'";
 							getch();
 							goto flag4;
 						case '2':
 							frame_width=100;
-							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 6);
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
 							cout<<"The difficulty level is now set to 'Medium'";
 							getch();
 							goto flag4;
 						case '3':
 							frame_width=50;
-							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 6);
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
 							cout<<"The difficulty level is now set to 'Hard'";
 							getch();
 							goto flag4;
@@ -134,13 +153,40 @@ void main()
 							goto flag4;
 					}
 				case '2':
-					clrscr();
-					cout<<"UNDER CONSTRUCTION";
-					cout<<"\nYou'll have to set screen size by modifying the source code.";
-					cout<<"\nNot at all sorry for the inconvenience:-|";
-					cout<<"\nPress any key to continue...";
-					getch();
-					goto flag4;
+					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 7);
+					cout<<"Enter the subchoice (enter invalid";
+					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 8);
+					cout<<" input to go back): 2.";
+					cin>>choice2;
+					switch(choice2)
+					{
+						case '1':
+							MAX_X=max_xs;
+							MAX_Y=max_ys;
+							clrscr();   frame();
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
+							cout<<"The screen size is now set to 'Small'";
+							getch();
+							goto flag4;
+						case '2':
+							MAX_X=max_xm;
+							MAX_Y=max_ym;
+							clrscr();   frame();
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
+							cout<<"The screen size is now set to 'Medium'";
+							getch();
+							goto flag4;
+						case '3':
+							MAX_X=max_xl;
+							MAX_Y=max_yl;
+							clrscr();   frame();
+							gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
+							cout<<"The screen size is now set to 'Large'";
+							getch();
+							goto flag4;
+						default :
+							goto flag4;
+					}
 				case '3':
 					goto flag3;
 				default:
@@ -150,7 +196,7 @@ void main()
 
 			break;
 		case 4 :
-			clrscr();
+			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 19, (MAX_Y - MIN_Y + 1)/2);
 			cout<<"Are you sure you want to exit? (y/n): ";
 			cin>>choice2;
@@ -377,9 +423,9 @@ void movetail (char pos_key[ARR_X][ARR_Y])
 }
 void addfood()
 {
+	randomize();
 	do
 	{
-		randomize();
 		x2 = random(MAX_X - MIN_X + 1) + MIN_X;
 		y2 = random(MAX_Y - MIN_Y + 1) + MIN_Y;
 	}while(x2==x && y2==y || (pos_key[x2][y2]=='w' || pos_key[x2][y2]=='s' ||
@@ -423,7 +469,7 @@ void printgameover()
 				gotoxy((MAX_X - MIN_X + 1)/2 - 5 , (MAX_Y - MIN_Y + 1)/2);
 				cout<<"GAME OVER!!";
 				delay(400);
-				clrscr();
+				clrscr();   frame();
 				delay(600);
 				++k;
 			}while(k<=4);
@@ -434,6 +480,7 @@ void printgameover()
 			gotoxy((MAX_X - MIN_X + 1)/2 - 12 , (MAX_Y - MIN_Y + 1)/2 + 2);
 			cout<<"Press any key to exit...";
 			getch();
+			++counter;
 			main();
 		}
 }
@@ -464,5 +511,47 @@ char getdir()
 	else
 	{
 		return 'x';
+	}
+}
+void screen()
+{
+	struct text_info info;
+	gettextinfo(&info);
+
+	MAX_X = (int) info.winright - 1;
+	MIN_X = (int) info.winleft + 1;
+	MAX_Y = (int) info.winbottom - 2;
+	MIN_Y = (int) info.wintop + 1;
+	max_xs = (int) MAX_X * 0.6;
+	max_xm = (int) MAX_X * 0.8;
+	max_xl = (int) MAX_X;
+	max_ys = (int) MAX_Y * 0.6;
+	max_ym = (int) MAX_Y * 0.8;
+	max_yl = (int) MAX_Y;
+	frame();
+	return;
+}
+void frame()
+{
+
+	int width = MAX_X - MIN_X + 3;
+	int height = MAX_Y - MIN_Y + 4;
+
+	gotoxy(1,1);
+	for(int i = 0; i < width; i++)
+	{
+		cout << '*';
+	}
+
+	for(i = 2; i <= height - 2; i++)
+	{
+		gotoxy(1, i); cout << '*';
+		gotoxy(width, i); cout << '*';
+	}
+
+	gotoxy(1, height - 1);
+	for(i = 0; i < width; i++)
+	{
+		cout << '*';
 	}
 }
