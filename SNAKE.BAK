@@ -26,7 +26,7 @@ int x=(max_x - min_x + 1)/2, y=(max_y - min_y + 1)/2;       //head coordinates
 int x1, y1;   //tail coordinates
 int x2, y2;   //food coordinates
 int snaklen = 1;
-int frame_width = 200;
+int frame_width = 150;
 
 
 void main()
@@ -82,14 +82,71 @@ void main()
 			goto flag3;
 			break;
 		case 3 :
+			flag4:
 			clrscr();
-			cout<<"UNDER CONSTRUCTION";
-			cout<<"\nI'm too tired to add this right now...";
-			cout<<"\nFor now, edit screen size and game speed in the source code.";
-			cout<<"\nNot at all sorry for the inconvenience...:-|";
-			cout<<"\nPress any key to return to the previous menu...";
-			getch();
-			goto flag3;
+			gotoxy((max_x - min_x + 1)/2 - 3, (max_y - min_y + 1)/2 - 6);
+			cout<<"OPTIONS";
+			gotoxy((max_x - min_x + 1)/2 - 8, (max_y - min_y + 1)/2 - 4);
+			cout<<"1. Set difficulty level: ";
+			gotoxy((max_x - min_x + 1)/2 - 5, (max_y - min_y + 1)/2 - 3);
+			cout<<"1.1 Easy";
+			gotoxy((max_x - min_x + 1)/2 - 5, (max_y - min_y + 1)/2 - 2);
+			cout<<"1.2 Medium";
+			gotoxy((max_x - min_x + 1)/2 - 5, (max_y - min_y + 1)/2 - 1);
+			cout<<"1.3 Hard";
+			gotoxy((max_x - min_x + 1)/2 - 8, (max_y - min_y + 1)/2 + 1);
+			cout<<"2. Set screen size";
+			gotoxy((max_x - min_x + 1)/2 - 8, (max_y - min_y + 1)/2 + 2);
+			cout<<"3. Back to main menu";
+			gotoxy((max_x - min_x + 1)/2 - 8, (max_y - min_y + 1)/2 + 4);
+			cout<<"Enter your choice: ";
+			cin>>choice2;
+			switch (choice2)
+			{
+				case '1':
+					gotoxy((max_x - min_x + 1)/2 - 16, (max_y - min_y + 1)/2 + 4);
+					cout<<"Enter the subchoice (enter invalid";
+					gotoxy((max_x - min_x + 1)/2 - 16, (max_y - min_y + 1)/2 + 5);
+					cout<<" input to go back): 1.";
+					cin>>choice2;
+					switch(choice2)
+					{
+						case '1':
+							frame_width=150;
+							gotoxy((max_x - min_x + 1)/2 - 16, (max_y - min_y + 1)/2 + 6);
+							cout<<"The difficulty level is now set to 'Easy'";
+							getch();
+							goto flag4;
+						case '2':
+							frame_width=100;
+							gotoxy((max_x - min_x + 1)/2 - 16, (max_y - min_y + 1)/2 + 6);
+							cout<<"The difficulty level is now set to 'Medium'";
+							getch();
+							goto flag4;
+						case '3':
+							frame_width=50;
+							gotoxy((max_x - min_x + 1)/2 - 16, (max_y - min_y + 1)/2 + 6);
+							cout<<"The difficulty level is now set to 'Hard'";
+							getch();
+							goto flag4;
+						default :
+							goto flag4;
+					}
+				case '2':
+					clrscr();
+					cout<<"UNDER CONSTRUCTION";
+					cout<<"\nYou'll have to set screen size by modifying the source code.";
+					cout<<"\nNot at all sorry for the inconvenience:-|";
+					cout<<"\nPress any key to continue...";
+					getch();
+					goto flag4;
+				case '3':
+					goto flag3;
+				default:
+					goto flag4;
+
+			}
+
 			break;
 		case 4 :
 			clrscr();
