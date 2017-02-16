@@ -223,6 +223,7 @@ void keystroke()
 {
 	randomize();
 	flag:
+	movehead(x, y);
 	char c0, c=getdir();
 	switch(c)
 	{
@@ -242,6 +243,15 @@ void keystroke()
 			x1=x-1;
 			y1=y;
 			break;
+		case 27 :
+			if(pause())
+			{
+				return;
+			}
+			else
+			{
+				goto flag;
+			}
 		default :
 			goto flag;
 	}
