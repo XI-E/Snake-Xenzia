@@ -60,6 +60,7 @@ void main()
 		}
 	}
 	clrscr();   frame();
+	_setcursortype(_NORMALCURSOR);
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 6);
 	textcolor(YELLOW);
 	cprintf("********************");
@@ -249,6 +250,7 @@ void main()
 void keystroke()
 {
 	randomize();
+	_setcursortype(_NOCURSOR);
 	flag:
 	char c0, c=getdir();
 	switch(c)
@@ -407,7 +409,8 @@ void adjustxy(int &x, int &y)
 void movehead (int x, int y)
 {
 	gotoxy(x, y);
-	cout<<"@";
+	textcolor(WHITE);
+	cprintf("@");
 //	delay(500);                //for testing purposes
 }
 
@@ -469,7 +472,9 @@ void addfood()
 	}while(x2==x && y2==y || (pos_key[x2][y2]=='w' || pos_key[x2][y2]=='s' ||
 									 pos_key[x2][y2]=='a' || pos_key[x2][y2]=='d'   ));
 	gotoxy(x2, y2);
-	cout<<"@";
+	textcolor(LIGHTMAGENTA);
+	cprintf("@");
+	textcolor(WHITE);
 	return;
 
 }
