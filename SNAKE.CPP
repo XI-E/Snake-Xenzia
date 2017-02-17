@@ -1,3 +1,35 @@
+/*
+			------------
+			SNAKE XENZIA
+			------------
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	This is a basic snake game which is commonly 
+	found in old nokia phones. This game has a
+	snake the player has to move with the arrow 
+	keys. There will be food particles generated 
+	on the screen from time to time. When the 
+	snake eats them, its length increases. The 
+	game ends when the snake bits its own body.
+	The player's objective is to get the highest
+	possible score by making the snake as long as
+	possible.
+	
+	Features of this game:
+	1. 3 difficulty levels: Easy, Medium, Hard
+	   Harder the difficulty level, faster will
+	   be the movement of the snake.
+	2. The player can choose 3 different screen
+	   sizes: Small, Medium, Large
+	   
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Created by:	Anirudh Panigrahi
+			XI-E
+			Remal Public School, Sector-3
+			Rohini, New Delhi
+			
+			Roll no.-11534
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 #include <iostream.h>
 #include <conio.h>
 #include <dos.h>
@@ -5,7 +37,6 @@
 
 #define ARR_X 200
 #define ARR_Y 200	//dimensions of pos_key matrix
-
 
 char pos_key[ARR_X][ARR_Y];		//matrix corresponding to every position on the screen
 
@@ -22,7 +53,6 @@ void screen();				//sets all screen parameters at the beginning of the program
 void frame();				//prints the borders of the screen
 int pause();				//manages pause option
 int select(int , int , int [], int);	//helps in option selection in the game menus with arrow keys
-
 
 int MAX_X;			//maximum horizontal coordinate of screen
 int MIN_X;			//minimum horizontal coordinate of screen
@@ -41,12 +71,13 @@ int snaklen = 1;		//records length of the snake(to show score at end)
 int frame_width = 150;  	//sets default game speed
 int counter = 0;		//records the no. of times the game is played
 
-
 void main()
 {
 	if(counter==0)
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
+		system ("cd snake-~1");
+		system ("f5");
 		randomize();	//to seed the random() function in addfood()
 		screen();
 	}
@@ -197,7 +228,6 @@ void main()
 				case 10:
 					goto flag3;
 			}
-
 			break;
 			////////END OF OPTIONS MENU/////////
 		case 4 :
