@@ -30,10 +30,12 @@
 			Roll no.-11534
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-#include <iostream.h>
-#include <conio.h>
-#include <dos.h>
+#include <iostream>
+#include "rlutil.h"
 #include <stdlib.h>
+
+using namespace std;
+using namespace rlutil;
 
 #define ARR_X 200
 #define ARR_Y 200	//dimensions of pos_key matrix
@@ -71,15 +73,13 @@ int snaklen = 1;		//records length of the snake(to show score at end)
 int frame_width = 150;  	//sets default game speed
 int counter = 0;		//records the no. of times the game is played
 
-void main()
+int main()
 {
 	if(counter==0)
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
-		system ("cd snake-~1");
-		system ("f5");
-		randomize();	//to seed the random() function in addfood()
-		screen();
+        srand(10);
+        screen();
 	}
 ///////WELCOME SCREEN//////////
 	int choice;
@@ -92,21 +92,21 @@ void main()
 			pos_key[l][m] = 'k';		//to reset pos_key at start of every new game
 		}
 	}
-	clrscr();   frame();
-	_setcursortype(_NOCURSOR);
+	rlutil::cls();   frame();
+	rlutil::hidecursor();
 	////////MAIN MENU/////////	
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 6);
-	textcolor(YELLOW);
-	cprintf("********************");
+	rlutil::setColor(YELLOW);
+	cout<<"********************";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 4);
-	cprintf("****");
-	textcolor(MAGENTA);
-	cprintf("SNAKE XENZIA");
-	textcolor(YELLOW);
-	cprintf("****");
+	cout<<"****";
+	rlutil::setColor(MAGENTA);
+	cout<<"SNAKE XENZIA";
+	rlutil::setColor(YELLOW);
+	cout<<"****";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 2);
-	cprintf("********************");
-	textcolor(WHITE);
+	cout<<"********************";
+	rlutil::setColor(WHITE);
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2);
 	cout<<"1. Play";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 1);
@@ -117,21 +117,22 @@ void main()
 	cout<<"4. Exit";
 	/////////END OF MAIN MENU/////////
 	int pos_gap1[12] = {1, 1, 1, 1, -1};
+    int pos_gap2[12] = {1, 1, 3, 3, 3, 1, 1, 2, 2, 1, -1};
 	choice = select((MAX_X - MIN_X + 1)/2 - 11, (MAX_Y - MIN_Y + 1)/2, pos_gap1, 4);
 	switch (choice)
 	{
 		case 1 :
-			clrscr();   frame();
+			rlutil::cls();   frame();
 			x = (MAX_X - MIN_X + 1)/2, y = (MAX_Y - MIN_Y + 1)/2;
 			addfood();
 			keystroke();
 			break;
 		case 2 :
-			clrscr();   frame();
+			rlutil::cls();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 3, (MAX_Y - MIN_Y + 1)/2 - 3);
-			textcolor(YELLOW);
-			cprintf("CONTROLS");
-			textcolor(WHITE);
+			rlutil::setColor(YELLOW);
+			cout<<"CONTROLS";
+			rlutil::setColor(WHITE);
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 - 1);
 			cout<<"1. Esc - Pauses the game";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 + 1);
@@ -142,12 +143,12 @@ void main()
 			goto flag3;
 		case 3 :
 			flag4:
-			clrscr();   frame();
+			rlutil::cls();   frame();
 			////////OPTIONS MENU////////
 			gotoxy((MAX_X - MIN_X + 1)/2 - 3, (MAX_Y - MIN_Y + 1)/2 - 6);
-			textcolor(YELLOW);
-			cprintf("OPTIONS");
-			textcolor(WHITE);
+			rlutil::setColor(YELLOW);
+			cout<<"OPTIONS";
+			rlutil::setColor(WHITE);
 			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 - 4);
 			cout<<"1. Set difficulty level: ";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 7, (MAX_Y - MIN_Y + 1)/2 - 3);
@@ -166,63 +167,62 @@ void main()
 			cout<<"2.3 Large";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 8, (MAX_Y - MIN_Y + 1)/2 + 6);
 			cout<<"3. Back to main menu";
-			int pos_gap2[12] = {1, 1, 3, 3, 3, 1, 1, 2, 2, 1, -1};
 			choice = select((MAX_X - MIN_X + 1)/2 - 9, (MAX_Y - MIN_Y + 1)/2 - 3, pos_gap2, 10);
 			switch (choice)
 			{
 				case 1:
 					frame_width = 150;
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(GREEN);
-					cprintf("The difficulty level is now set to 'Easy'");
-					textcolor(WHITE);
+					rlutil::setColor(GREEN);
+					cout<<"The difficulty level is now set to 'Easy'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 				case 2:
 					frame_width = 100;
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(BLUE);
-					cprintf("The difficulty level is now set to 'Medium'");
-					textcolor(WHITE);
+					rlutil::setColor(BLUE);
+					cout<<"The difficulty level is now set to 'Medium'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 				case 3:
 					frame_width = 50;
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(RED);
-					cprintf("The difficulty level is now set to 'Hard'");
-					textcolor(WHITE);
+					rlutil::setColor(RED);
+					cout<<"The difficulty level is now set to 'Hard'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 
 				case 6:
 					MAX_X = max_xs;
 					MAX_Y = max_ys;
-					clrscr();   frame();
+					rlutil::cls();   frame();
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(CYAN);
-					cprintf("The screen size is now set to 'Small'");
-					textcolor(WHITE);
+					rlutil::setColor(CYAN);
+					cout<<"The screen size is now set to 'Small'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 				case 7:
 					MAX_X = max_xm;
 					MAX_Y = max_ym;
-					clrscr();   frame();
+					rlutil::cls();   frame();
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(CYAN);
-					cprintf("The screen size is now set to 'Medium'");
-					textcolor(WHITE);
+					rlutil::setColor(CYAN);
+					cout<<"The screen size is now set to 'Medium'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 				case 8:
 					MAX_X = max_xl;
 					MAX_Y = max_yl;
-					clrscr();   frame();
+					rlutil::cls();   frame();
 					gotoxy((MAX_X - MIN_X + 1)/2 - 16, (MAX_Y - MIN_Y + 1)/2 + 9);
-					textcolor(CYAN);
-					cprintf("The screen size is now set to 'Large'");
-					textcolor(WHITE);
+					rlutil::setColor(CYAN);
+					cout<<"The screen size is now set to 'Large'";
+					rlutil::setColor(WHITE);
 					getch();
 					goto flag4;
 				case 10:
@@ -231,13 +231,13 @@ void main()
 			break;
 			////////END OF OPTIONS MENU/////////
 		case 4 :
-			clrscr();   frame();
+			rlutil::cls();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 - 1);
-			textcolor(LIGHTRED);
-			cprintf("Are you sure you want to exit?");
+			rlutil::setColor(LIGHTRED);
+			cout<<"Are you sure you want to exit?";
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 + 1);
-			cprintf("(hit key y or n...)");
-			textcolor(WHITE);
+			cout<<"(hit key y or n...)";
+			rlutil::setColor(WHITE);
 			choice2 = getch();
 			if(choice2=='y' || choice2=='Y')
 			{
@@ -305,7 +305,7 @@ void keystroke()
 					y==MAX_Y ? pos_key[x][MIN_Y] : pos_key[x][y+1] = 'w';
 					movetail(pos_key);
 					printgameover();
-					delay(frame_width);
+					rlutil::msleep(frame_width);
 				}while(!kbhit());
 				break;
 			case 's':
@@ -317,7 +317,7 @@ void keystroke()
 					y==MIN_Y ? pos_key[x][MAX_Y] : pos_key[x][y-1] = 's';
 					movetail(pos_key);
 					printgameover();
-					delay(frame_width);
+					rlutil::msleep(frame_width);
 				}while(!kbhit());
 				break;
 			case 'a':
@@ -329,7 +329,7 @@ void keystroke()
 					x==MAX_X ? pos_key[MIN_X][y] : pos_key[x+1][y] = 'a';
 					movetail(pos_key);
 					printgameover();
-					delay(frame_width);
+					rlutil::msleep(frame_width);
 				}while(!kbhit());
 				break;
 			case 'd':
@@ -341,7 +341,7 @@ void keystroke()
 					x==MIN_X ? pos_key[MAX_X][y] : pos_key[x-1][y] = 'd';
 					movetail(pos_key);
 					printgameover();
-					delay(frame_width);
+					rlutil::msleep(frame_width);
 				}while(!kbhit());
 				break;
 		}
@@ -423,9 +423,9 @@ void adjustxy(int &x, int &y)
 void movehead (int x, int y)
 {
 	gotoxy(x, y);
-	textcolor(WHITE);
-	cprintf("@");
-//	delay(500);                //for testing purposes
+	rlutil::setColor(WHITE);
+	cout<<"@";
+//	rlutil::msleep(500);                //for testing purposes
 }
 
 void movetail (char pos_key[ARR_X][ARR_Y])
@@ -474,7 +474,7 @@ void movetail (char pos_key[ARR_X][ARR_Y])
 		}
 
 	}
-//		delay(500);    //for testing purposes
+//		rlutil::msleep(500);    //for testing purposes
 		return;
 
 
@@ -484,14 +484,14 @@ void addfood()
 	//LOOP WILL RUN UNTIL X2, Y2 ARE SET TO VALUES WHICH ARE NOT ON THE SNAKE//
 	do
 	{
-		x2 = random(MAX_X - MIN_X + 1) + MIN_X;
-		y2 = random(MAX_Y - MIN_Y + 1) + MIN_Y;
+		x2 = (rand() % (MAX_X - MIN_X + 1) ) + MIN_X;
+		y2 = (rand() % (MAX_Y - MIN_Y + 1) )+ MIN_Y;
 	}while(x2==x && y2==y || (pos_key[x2][y2]=='w' || pos_key[x2][y2]=='s' ||
 				  pos_key[x2][y2]=='a' || pos_key[x2][y2]=='d'   ));
 	gotoxy(x2, y2);
-	textcolor(LIGHTMAGENTA);
-	cprintf("@");
-	textcolor(WHITE);
+	rlutil::setColor(LIGHTMAGENTA);
+	cout<<"@";
+	rlutil::setColor(WHITE);
 	return;
 
 }
@@ -524,27 +524,27 @@ void printgameover()
 	if(checkdie()!=0)
 		{
 			int k = 1;
-			delay(frame_width);
+			rlutil::msleep(frame_width);
 			//LOOP TO FLASH "GAME OVER" 4 TIMES//
 			do
 			{
-				textcolor(RED);
+				rlutil::setColor(RED);
 				gotoxy((MAX_X - MIN_X + 1)/2 - 5 , (MAX_Y - MIN_Y + 1)/2);
-				cprintf("GAME OVER!!");
-				textcolor(WHITE);
-				delay(400);
-				clrscr();   frame();
-				delay(600);
+				cout<<"GAME OVER!!\a";
+				rlutil::setColor(WHITE);
+				rlutil::msleep(400);
+				rlutil::cls();   frame();
+				rlutil::msleep(600);
 				++k;
 			}while(k<=4);
 			while(kbhit())		//to ignore keystrokes pressed while displaying game over//
 			{			//so that final score can be visible//
 				getch();
 			}
-			textcolor(RED);
+			rlutil::setColor(RED);
 			gotoxy((MAX_X - MIN_X + 1)/2 - 5 , (MAX_Y - MIN_Y + 1)/2);
-			cprintf("GAME OVER!!");
-			textcolor(WHITE);
+			cout<<"GAME OVER!!";
+			rlutil::setColor(WHITE);
 			gotoxy((MAX_X - MIN_X + 1)/2 - 8 , (MAX_Y - MIN_Y + 1)/2 + 1);
 			cout<<"Final Score: "<<snaklen*10;
 			gotoxy((MAX_X - MIN_X + 1)/2 - 12 , (MAX_Y - MIN_Y + 1)/2 + 2);
@@ -556,42 +556,31 @@ void printgameover()
 }
 char getdir()
 {
-	char ch = getch();
-	if(ch==0)
+    int ch = 0; cout.flush(); cin.clear(); fflush(stdin);
+    ch = rlutil::getkey();
+	switch(ch)
 	{
-		ch = getch();
-		switch(ch)
-		{
-			case 'H':
-				return 'w';
-			case 'P':
-				return 's';
-			case 'K':
-				return 'a';
-			case 'M':
-				return 'd';
-			default :
-				return 'x';
-		}
+		case rlutil::KEY_UP:
+			return 'w';
+		case rlutil::KEY_DOWN:
+			return 's';
+		case rlutil::KEY_LEFT:
+			return 'a';
+		case rlutil::KEY_RIGHT:
+			return 'd';
+	    case rlutil::KEY_ESCAPE:
+		    return 27;
+		default :
+			return 'x';  //any random character, so that it can be ignored by keystroke()
 	}
-	else if(ch==27)
-	{
-		return ch;
-	}
-	else
-	{
-		return 'x';		//any random character, so that it can be ignored by keystroke()
-	}
+    
 }
 void screen()
 {
-	struct text_info info;
-	gettextinfo(&info);
-
-	MAX_X = (int) info.winright - 1;
-	MIN_X = (int) info.winleft + 1;
-	MAX_Y = (int) info.winbottom - 2;
-	MIN_Y = (int) info.wintop + 1;
+	MAX_X = (int) rlutil::tcols() - 1;
+	MIN_X = (int) 2;
+	MAX_Y = (int) rlutil::trows() - 2;
+	MIN_Y = (int) 2;
 	max_xs = (int) MAX_X * 0.6;
 	max_xm = (int) MAX_X * 0.8;
 	max_xl = (int) MAX_X;
@@ -606,37 +595,37 @@ void frame()
 
 	int width = MAX_X - MIN_X + 3;
 	int height = MAX_Y - MIN_Y + 4;
-	textcolor(YELLOW);
+	rlutil::setColor(YELLOW);
 	gotoxy(1,1);
 	for(int i = 0; i < width; i++)
 	{
-		cprintf("%c", '*');
+		cout<<"*";
 	}
 
-	for(i = 2; i <= height - 2; i++)
+	for(int i = 2; i <= height - 2; i++)
 	{
-		gotoxy(1, i); cprintf ("%c", '*');
-		gotoxy(width, i); cprintf ("%c", '*');
+		gotoxy(1, i); cout<<"*";
+		gotoxy(width, i); cout<<"*";
 	}
 
 	gotoxy(1, height - 1);
-	for(i = 0; i < width; i++)
+	for(int i = 0; i < width; i++)
 	{
-		cprintf ("%c", '*');
+		cout<<"*";
 	}
-	textcolor(WHITE);
+	rlutil::setColor(WHITE);
 }
 int pause()
 {
-	textcolor(GREEN);
+	rlutil::setColor(GREEN);
 	gotoxy((MAX_X-MIN_X+1)/2 - 15, MIN_Y - 1);
-	cprintf("PAUSED*Press esc again to exit");
+	cout<<"PAUSED*Press esc again to exit";
 	gotoxy((MAX_X-MIN_X+1)/2 - 15, MAX_Y + 1);
-	cprintf("Press any other key to resume");
-	textcolor(WHITE);
-	char ch = getch();
+	cout<<"Press any other key to resume";
+	rlutil::setColor(WHITE);cout<<endl;
+    int ch = rlutil::getkey();
 	frame();
-	if(ch==27)
+	if(ch==rlutil::KEY_ESCAPE)
 	{
 		return 1;
 	}
@@ -651,52 +640,48 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 //POS_GAP[Y] - THE GAP B/W THE OPTION AT (Y+1) COORDINATE AND THE NEXT OPTION TO IT//
 //TOTALGAP - THE TOTAL LINES OCCUPIED BY ALL OPTIONS//
 {
-	char ch = 26;
+	char ch = '>';
 	int y_init = y_opt;
 	int x_init = x_opt;
 	gotoxy(x_init, y_opt);
-	cprintf("%c", ch);
+	cout<<ch;
 	do
 	{
-		//gotoxy(2, 2);cout<<x_init<<" "<<y_init<<" "
-		//cout<<x_opt<<" "<<y_opt<<" "<<pos_gap[y_opt-y_init];  //for testing purposes
-		char c = getch();
-		if(c==0)
+//		gotoxy(2, 2);cout<<x_init<<" "<<y_init<<" ";
+//		cout<<x_opt<<" "<<y_opt<<" "<<pos_gap[y_opt-y_init];  //for testing purposes
+        int c = 0;cout<<endl;
+        c = rlutil::getkey();
+		gotoxy(x_init, y_opt);
+		cout<<" ";			//to delete initial bullet
+		//TO SET Y COORDINATE OF NEW BULLET ACCORDING TO ARROW KEY PRESSED//
+	
+        switch(c)
 		{
-			c = getch();
-			gotoxy(x_init, y_opt);
-			cout<<' ';			//to delete initial bullet
-			//TO SET Y COORDINATE OF NEW BULLET ACCORDING TO ARROW KEY PRESSED//
-			switch(c)
-			{
-				case 'H' :
-					if(y_opt==y_init)
-					{
-						y_opt = y_init + totalgap - 1;
-					}
-					else
-					{
-						y_opt = y_opt - pos_gap[y_opt-y_init - 1];
-					}
-					break;
-				case 'P' :
-					if(y_opt==(y_init + totalgap - 1))
-					{
-						y_opt = y_init;
-					}
-					else
-					{
-						y_opt = y_opt + pos_gap[y_opt-y_init];
-					}
-					break;
-			}
-			gotoxy(x_init, y_opt);		//to print new bullet
-			cprintf("%c", ch);
+			case rlutil::KEY_UP :
+				if(y_opt==y_init)
+				{
+					y_opt = y_init + totalgap - 1;
+				}
+				else
+				{
+					y_opt = y_opt - pos_gap[y_opt-y_init - 1];
+				}
+				break;
+			case rlutil::KEY_DOWN :
+				if(y_opt==(y_init + totalgap - 1))
+				{
+					y_opt = y_init;
+				}
+				else
+				{
+					y_opt = y_opt + pos_gap[y_opt-y_init];
+				}
+				break;
+            case rlutil::KEY_ENTER :
+                return y_opt - y_init + 1;	//to return option value according 
+						//to y coordinate of bullet
 		}
-		else if(c==13)
-		{
-			return y_opt - y_init + 1;	//to return option value according 
-							//to y coordinate of bullet
-		}
-	}while(1);
+		gotoxy(x_init, y_opt);		//to print new bullet
+		cout<<ch;
+    }while(1);
 }

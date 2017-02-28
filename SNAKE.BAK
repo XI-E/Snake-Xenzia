@@ -76,7 +76,9 @@ void main()
 	if(counter==0)
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
-		system (f5);
+		system ("cd snake-~1");
+//		system ("f5");
+		system ("f13");
 		randomize();	//to seed the random() function in addfood()
 		screen();
 	}
