@@ -65,6 +65,7 @@
 	#include <sys/ioctl.h> // for getkey()
 	#include <sys/types.h> // for kbhit()
 	#include <sys/time.h> // for kbhit()
+    #include <fcntl.h>
 
 /// Function: getch
 /// Get character without waiting for Return to be pressed.
@@ -85,25 +86,32 @@ RLUTIL_INLINE int getch(void) {
 /// Function: kbhit
 /// Determines if keyboard has been hit.
 /// Windows has this in conio.h
-RLUTIL_INLINE int kbhit(void) {
-	// Here be dragons.
-	static struct termios oldt, newt;
-	int cnt = 0;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag    &= ~(ICANON | ECHO);
-	newt.c_iflag     = 0; // input mode
-	newt.c_oflag     = 0; // output mode
-	newt.c_cc[VMIN]  = 1; // minimum time to wait
-	newt.c_cc[VTIME] = 1; // minimum characters to wait for
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ioctl(0, FIONREAD, &cnt); // Read count
-	struct timeval tv;
-	tv.tv_sec  = 0;
-	tv.tv_usec = 100;
-    select(STDIN_FILENO+1, NULL, NULL, NULL, &tv); // A small time delay
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return cnt; // Return number of characters
+
+RLUTIL_INLINE int kbhit(void)  //I have changed this definition by copying from https://cboard.cprogramming.com/c-programming/63166-kbhit-linux.html
+{
+  struct termios oldt, newt;
+  int ch;
+  int oldf;
+ 
+  tcgetattr(STDIN_FILENO, &oldt);
+  newt = oldt;
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+ 
+  ch = getchar();
+ 
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+  fcntl(STDIN_FILENO, F_SETFL, oldf);
+ 
+  if(ch != EOF)
+  {
+    ungetc(ch, stdin);
+    return 1;
+  }
+ 
+  return 0;
 }
 #endif // _WIN32
 
@@ -253,12 +261,6 @@ const RLUTIL_STRING_T ANSI_BACKGROUND_CYAN    = "\033[46m";
 const RLUTIL_STRING_T ANSI_BACKGROUND_WHITE   = "\033[47m";
 // Remaining colors not supported as background colors
 
-/// Function: nb_getch
-/// Non-blocking getch(). Returns 0 if no key was pressed.
-RLUTIL_INLINE int nb_getch(void) {
-	if (kbhit()) return getch();
-	else return 0;
-}
 /**
  * Enums: Key codes for keyhit()
  *
@@ -350,17 +352,6 @@ enum {
 /// Note:
 /// Only Arrows, Esc, Enter and Space are currently working properly.
 RLUTIL_INLINE int getkey(void) {
-	#ifndef _WIN32
-	int cnt;
-    while(true) 
-    {
-        if(kbhit()) 
-        {
-            cnt = kbhit(); // for ANSI escapes processing
-            break;
-        }
-    }
-	#endif
 	int k = getch();    
 	switch(k) {
 		case 0: {
@@ -393,14 +384,14 @@ RLUTIL_INLINE int getkey(void) {
 				case 83: return KEY_DELETE;
 				default: return kk-123+KEY_F1; // Function keys
 			}}
-		case 13: return KEY_ENTER;
+		case '\n': return KEY_ENTER;
 #ifdef _WIN32
 		case 27: return KEY_ESCAPE;
 #else // _WIN32
 		case 155: // single-character CSI
 		case 27: {
 			// Process ANSI escape sequences
-			if (cnt >= 3 && getch() == '[') {
+            if (kbhit() == 1 && getch() == '[') {
 				switch (k = getch()) {
 					case 'A': return KEY_UP;
 					case 'B': return KEY_DOWN;
@@ -414,7 +405,12 @@ RLUTIL_INLINE int getkey(void) {
 	}
 }
 
-
+/// Function: nb_getch
+/// Non-blocking getch(). Returns 0 if no key was pressed.
+RLUTIL_INLINE int nb_getch(void) {
+	if (kbhit()) return getch();
+	else return 0;
+}
 
 /// Function: getANSIColor
 /// Return ANSI color escape sequence for specified number 0-15.
