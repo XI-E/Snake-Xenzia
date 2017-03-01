@@ -306,6 +306,7 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
+                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 's':
@@ -318,6 +319,7 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
+                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 'a':
@@ -330,6 +332,7 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
+                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 'd':
@@ -342,6 +345,7 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
+                    cout.flush();
 				}while(!kbhit());
 				break;
 		}
@@ -525,7 +529,7 @@ void printgameover()
 	if(checkdie()!=0)
 		{
 			int k = 1;
-			rlutil::msleep(frame_width);
+			rlutil::msleep(frame_width);cout.flush();
 			//LOOP TO FLASH "GAME OVER" 4 TIMES//
 			do
 			{
@@ -533,9 +537,9 @@ void printgameover()
 				gotoxy((MAX_X - MIN_X + 1)/2 - 5 , (MAX_Y - MIN_Y + 1)/2);
 				cout<<"GAME OVER!!\a";
 				rlutil::setColor(WHITE);
-				rlutil::msleep(400);
+				rlutil::msleep(400);cout.flush();
 				rlutil::cls();   frame();
-				rlutil::msleep(600);
+				rlutil::msleep(600);cout.flush();
 				++k;
 			}while(k<=4);
 			while(kbhit())		//to ignore keystrokes pressed while displaying game over//
