@@ -37,6 +37,29 @@
 using namespace std;
 using namespace rlutil;
 
+//////////echo_off and echo_on function definitions////////////
+//////////to prevent echoing of user input during a msleep execution in linux systems//////////
+#ifndef _WIN32
+static struct termios stored_settings;
+
+void echo_off(void)
+{
+    struct termios new_settings;
+    tcgetattr(0,&stored_settings);
+    new_settings = stored_settings;
+    new_settings.c_lflag &= (~ECHO);
+    tcsetattr(0,TCSANOW,&new_settings);
+    return;
+}
+
+void echo_on(void)
+{
+    tcsetattr(0,TCSANOW,&stored_settings);
+    return;
+}
+#endif
+/////////////////////////////////////////////////////////////////////
+
 #define ARR_X 200
 #define ARR_Y 200	//dimensions of pos_key matrix
 
@@ -79,6 +102,7 @@ int main()
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
         srand(10);
+        echo_off();
         screen();
 	}
 ///////WELCOME SCREEN//////////
@@ -241,7 +265,10 @@ int main()
 			choice2 = getch();
 			if(choice2=='y' || choice2=='Y')
 			{
-				exit(0);
+				rlutil::cls();
+                echo_on();
+                rlutil::showcursor();
+                return 0;
 			}
 			else
 			{

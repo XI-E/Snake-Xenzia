@@ -638,6 +638,7 @@ RLUTIL_INLINE void showcursor(void) {
 
 /// Function: msleep
 /// Waits given number of milliseconds before continuing.
+
 RLUTIL_INLINE void msleep(unsigned int ms) {
 #ifdef _WIN32
 	Sleep(ms);
