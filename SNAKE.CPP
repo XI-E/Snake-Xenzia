@@ -265,10 +265,10 @@ int main()
 			choice2 = getch();
 			if(choice2=='y' || choice2=='Y')
 			{
-				rlutil::cls();
-                echo_on();
+				echo_on();
+                rlutil::cls();
                 rlutil::showcursor();
-                return 0;
+                exit(0);
 			}
 			else
 			{
