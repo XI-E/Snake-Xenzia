@@ -253,6 +253,12 @@ const RLUTIL_STRING_T ANSI_BACKGROUND_CYAN    = "\033[46m";
 const RLUTIL_STRING_T ANSI_BACKGROUND_WHITE   = "\033[47m";
 // Remaining colors not supported as background colors
 
+/// Function: nb_getch
+/// Non-blocking getch(). Returns 0 if no key was pressed.
+RLUTIL_INLINE int nb_getch(void) {
+	if (kbhit()) return getch();
+	else return 0;
+}
 /**
  * Enums: Key codes for keyhit()
  *
@@ -408,12 +414,7 @@ RLUTIL_INLINE int getkey(void) {
 	}
 }
 
-/// Function: nb_getch
-/// Non-blocking getch(). Returns 0 if no key was pressed.
-RLUTIL_INLINE int nb_getch(void) {
-	if (kbhit()) return getch();
-	else return 0;
-}
+
 
 /// Function: getANSIColor
 /// Return ANSI color escape sequence for specified number 0-15.

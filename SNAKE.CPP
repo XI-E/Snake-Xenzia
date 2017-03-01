@@ -89,7 +89,7 @@ int main()
 	{
 		for(int m = 0; m<ARR_Y; ++m)
 		{
-			pos_key[l][m] = 'k';		//to reset pos_key at start of every new game
+			pos_key[l][m] = '-';		//to reset pos_key at start of every new game
 		}
 	}
 	rlutil::cls();   frame();
@@ -302,7 +302,7 @@ void keystroke()
 					y--;
 					adjustxy(x, y);
 					movehead(x, y);
-					y==MAX_Y ? pos_key[x][MIN_Y] : pos_key[x][y+1] = 'w';
+					y==MAX_Y ? pos_key[x][MIN_Y] = 'w' : pos_key[x][y+1] = 'w';
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
@@ -314,7 +314,7 @@ void keystroke()
 					y++;
 					adjustxy(x, y);
 					movehead(x, y);
-					y==MIN_Y ? pos_key[x][MAX_Y] : pos_key[x][y-1] = 's';
+					y==MIN_Y ? pos_key[x][MAX_Y] = 's' : pos_key[x][y-1] = 's';
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
@@ -326,7 +326,7 @@ void keystroke()
 					x--;
 					adjustxy(x, y);
 					movehead(x, y);
-					x==MAX_X ? pos_key[MIN_X][y] : pos_key[x+1][y] = 'a';
+					x==MAX_X ? pos_key[MIN_X][y] = 'a' : pos_key[x+1][y] = 'a';
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
@@ -338,7 +338,7 @@ void keystroke()
 					x++;
 					adjustxy(x, y);
 					movehead(x, y);
-					x==MIN_X ? pos_key[MAX_X][y] : pos_key[x-1][y] = 'd';
+					x==MIN_X ? pos_key[MAX_X][y] = 'd' : pos_key[x-1][y] = 'd';
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
@@ -412,7 +412,7 @@ void adjustxy(int &x, int &y)
 		y = MIN_Y;
 	else if (y == MIN_Y - 1)
 		y = MAX_Y;
-		if (x == MAX_X + 1)
+	if (x == MAX_X + 1)
 		x = MIN_X;
 	else if (x == MIN_X - 1)
 		x = MAX_X;
@@ -470,10 +470,11 @@ void movetail (char pos_key[ARR_X][ARR_Y])
 				gotoxy(x1, y1);
 				cout<<" ";
 				break;
-
+            
 		}
 
 	}
+
 //		rlutil::msleep(500);    //for testing purposes
 		return;
 
@@ -485,7 +486,7 @@ void addfood()
 	do
 	{
 		x2 = (rand() % (MAX_X - MIN_X + 1) ) + MIN_X;
-		y2 = (rand() % (MAX_Y - MIN_Y + 1) )+ MIN_Y;
+		y2 = (rand() % (MAX_Y - MIN_Y + 1) ) + MIN_Y;
 	}while(x2==x && y2==y || (pos_key[x2][y2]=='w' || pos_key[x2][y2]=='s' ||
 				  pos_key[x2][y2]=='a' || pos_key[x2][y2]=='d'   ));
 	gotoxy(x2, y2);
@@ -556,24 +557,23 @@ void printgameover()
 }
 char getdir()
 {
-    int ch = 0; cout.flush(); cin.clear(); fflush(stdin);
-    ch = rlutil::getkey();
+    int ch = rlutil::getkey();
+    cout.flush();
 	switch(ch)
-	{
-		case rlutil::KEY_UP:
-			return 'w';
-		case rlutil::KEY_DOWN:
-			return 's';
-		case rlutil::KEY_LEFT:
-			return 'a';
-		case rlutil::KEY_RIGHT:
-			return 'd';
-	    case rlutil::KEY_ESCAPE:
-		    return 27;
-		default :
-			return 'x';  //any random character, so that it can be ignored by keystroke()
-	}
-    
+    	{
+	   		case 14:
+	   			return 'w';
+	   		case 15:
+	   			return 's';
+	   		case 16:
+	   			return 'a';
+	   		case 17:
+	   			return 'd';
+	   		case 0 :
+                return 27;
+            default :
+	   			return 'x';		//any random character, so that it can be ignored by keystroke()
+	    }
 }
 void screen()
 {
@@ -617,7 +617,8 @@ void frame()
 }
 int pause()
 {
-	rlutil::setColor(GREEN);
+//    for(int i=1; i<200; i++)for(int j=0; j<200; j++){gotoxy(i,j);cout<<pos_key[i][j];}getch();
+    rlutil::setColor(GREEN);
 	gotoxy((MAX_X-MIN_X+1)/2 - 15, MIN_Y - 1);
 	cout<<"PAUSED*Press esc again to exit";
 	gotoxy((MAX_X-MIN_X+1)/2 - 15, MAX_Y + 1);
@@ -650,7 +651,7 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 //		gotoxy(2, 2);cout<<x_init<<" "<<y_init<<" ";
 //		cout<<x_opt<<" "<<y_opt<<" "<<pos_gap[y_opt-y_init];  //for testing purposes
         int c = 0;cout<<endl;
-        c = rlutil::getkey();
+        c = rlutil::getkey();   
 		gotoxy(x_init, y_opt);
 		cout<<" ";			//to delete initial bullet
 		//TO SET Y COORDINATE OF NEW BULLET ACCORDING TO ARROW KEY PRESSED//
