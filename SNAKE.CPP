@@ -122,7 +122,7 @@ int main()
 	switch (choice)
 	{
 		case 1 :
-			rlutil::cls();   frame();
+			cout<<"\033[2J\033[3J";   frame();
 			x = (MAX_X - MIN_X + 1)/2, y = (MAX_Y - MIN_Y + 1)/2;
 			addfood();
 			keystroke();
@@ -627,7 +627,7 @@ int pause()
 	cout<<"PAUSED*Press esc again to exit";
 	gotoxy((MAX_X-MIN_X+1)/2 - 15, MAX_Y + 1);
 	cout<<"Press any other key to resume";
-	rlutil::setColor(WHITE);cout<<endl;
+	rlutil::setColor(WHITE);cout.flush();
     int ch = rlutil::getkey();
 	frame();
 	if(ch==rlutil::KEY_ESCAPE)
@@ -654,7 +654,7 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 	{
 //		gotoxy(2, 2);cout<<x_init<<" "<<y_init<<" ";
 //		cout<<x_opt<<" "<<y_opt<<" "<<pos_gap[y_opt-y_init];  //for testing purposes
-        int c = 0;cout<<endl;
+        int c = 0;cout.flush();
         c = rlutil::getkey();   
 		gotoxy(x_init, y_opt);
 		cout<<" ";			//to delete initial bullet
