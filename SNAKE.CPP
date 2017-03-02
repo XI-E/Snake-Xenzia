@@ -57,6 +57,9 @@ void echo_on(void)
     tcsetattr(0,TCSANOW,&stored_settings);
     return;
 }
+#else
+void echo_off(void){}
+void echo_on(void){}
 #endif
 /////////////////////////////////////////////////////////////////////
 
@@ -101,7 +104,7 @@ int main()
 	if(counter==0)
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
-        srand(10);
+        srand(time(NULL));
         echo_off();
         screen();
 	}
