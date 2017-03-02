@@ -336,7 +336,6 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
-                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 's':
@@ -349,7 +348,6 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
-                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 'a':
@@ -362,7 +360,6 @@ void keystroke()
 					movetail(pos_key);
 					printgameover();
 					rlutil::msleep(frame_width);
-                    cout.flush();
 				}while(!kbhit());
 				break;
 			case 'd':
@@ -374,8 +371,7 @@ void keystroke()
 					x==MIN_X ? pos_key[MAX_X][y] = 'd' : pos_key[x-1][y] = 'd';
 					movetail(pos_key);
 					printgameover();
-					rlutil::msleep(frame_width);
-                    cout.flush();
+					rlutil::msleep(frame_width);;
 				}while(!kbhit());
 				break;
 		}
