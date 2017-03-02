@@ -3,36 +3,40 @@
 			SNAKE XENZIA
 			------------
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	This is a basic snake game which is commonly 
+	This is a basic snake game which is commonly
 	found in old nokia phones. This game has a
-	snake the player has to move with the arrow 
-	keys. There will be food particles generated 
-	on the screen from time to time. When the 
-	snake eats them, its length increases. The 
+	snake the player has to move with the arrow
+	keys. There will be food particles generated
+	on the screen from time to time. When the
+	snake eats them, its length increases. The
 	game ends when the snake bits its own body.
 	The player's objective is to get the highest
 	possible score by making the snake as long as
 	possible.
-	
+
 	Features of this game:
 	1. 3 difficulty levels: Easy, Medium, Hard
 	   Harder the difficulty level, faster will
 	   be the movement of the snake.
 	2. The player can choose 3 different screen
 	   sizes: Small, Medium, Large
-	   
+
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	Created by:	Anirudh Panigrahi
 			XI-E
 			Remal Public School, Sector-3
 			Rohini, New Delhi
-			
+
 			Roll no.-11534
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 #include <iostream>
 #include "rlutil.h"
 #include <stdlib.h>
+
+#ifdef _WIN32
+#include <ctime>
+#endif
 
 using namespace std;
 using namespace rlutil;
@@ -121,7 +125,7 @@ int main()
 	}
 	rlutil::cls();   frame();
 	rlutil::hidecursor();
-	////////MAIN MENU/////////	
+	////////MAIN MENU/////////
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 6);
 	rlutil::setColor(YELLOW);
 	cout<<"********************";
@@ -149,7 +153,7 @@ int main()
 	switch (choice)
 	{
 		case 1 :
-			cout<<"\033[2J\033[3J";   frame();
+			rlutil::cls();   frame();
 			x = (MAX_X - MIN_X + 1)/2, y = (MAX_Y - MIN_Y + 1)/2;
 			addfood();
 			keystroke();
@@ -321,7 +325,7 @@ void keystroke()
 			goto flag;
 	}
 	pos_key[x1][y1] = c;
-	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD// 
+	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD//
 	//CORRESPONDING TO ITS POSITION AND CALL MOVEHEAD() AND MOVETAIL()  //
 	flag2:
 		switch(c)
@@ -500,7 +504,7 @@ void movetail (char pos_key[ARR_X][ARR_Y])
 				gotoxy(x1, y1);
 				cout<<" ";
 				break;
-            
+
 		}
 
 	}
@@ -684,7 +688,7 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 		gotoxy(x_init, y_opt);
 		cout<<" ";			//to delete initial bullet
 		//TO SET Y COORDINATE OF NEW BULLET ACCORDING TO ARROW KEY PRESSED//
-	
+
         switch(c)
 		{
 			case rlutil::KEY_UP :
@@ -708,7 +712,8 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 				}
 				break;
             case rlutil::KEY_ENTER :
-                return y_opt - y_init + 1;	//to return option value according 
+            case 13 :
+                return y_opt - y_init + 1;	//to return option value according
 						//to y coordinate of bullet
 		}
 		gotoxy(x_init, y_opt);		//to print new bullet
