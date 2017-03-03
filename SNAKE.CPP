@@ -99,7 +99,7 @@ int max_yl;			//MAX_X for large screen
 int x, y;       		//head coordinates
 int x1, y1;     		//tail coordinates
 int x2, y2;     		//food coordinates
-int snaklen = 1;		//records length of the snake(to show score at end)
+int snaklen;		//records length of the snake(to show score at end)
 int frame_width = 150;  	//sets default game speed
 int counter = 0;		//records the no. of times the game is played
 
@@ -116,6 +116,7 @@ int main()
 	int choice;
 	char choice2;
 	flag3:
+    snaklen = 1;
 	for(int l = 0; l<ARR_X; ++l)
 	{
 		for(int m = 0; m<ARR_Y; ++m)
