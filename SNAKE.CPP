@@ -38,16 +38,16 @@
 #define ARR_X 200
 #define ARR_Y 200	//dimensions of pos_key matrix
 
-char pos_key[ARR_X][ARR_Y];		//matrix corresponding to every position on the screen
+char pos_key[ARR_X][ARR_Y];	//matrix corresponding to every position on the screen
 
 void keystroke();			//function which receives and maps keystrokes and decides the corresponding movement
-void adjustxy(int&, int&);		//helps in swapping screen sides when snake reaches one edge of screen
-void movehead(int, int);		//prints the head of the snake
+void adjustxy(int&, int&);	//helps in swapping screen sides when snake reaches one edge of screen
+void movehead(int, int);	//prints the head of the snake
 void movetail(char [ARR_X][ARR_Y]);	//replaces the last element of the snake with " "
 void addfood();				//adds food particles in the game
 int checkfood();			//checks if snake has eaten food or not
 int checkdie();				//checks if snake has bitten itself or not
-void printgameover();			//terminates game if checkdie() is true
+void printgameover();		//terminates game if checkdie() is true
 char getdir();				//converts arrow key input to alphabets
 void screen();				//sets all screen parameters at the beginning of the program
 void frame();				//prints the borders of the screen
@@ -56,7 +56,7 @@ int select(int , int , int [], int);	//helps in option selection in the game men
 
 int MAX_X;			//maximum horizontal coordinate of screen
 int MIN_X;			//minimum horizontal coordinate of screen
-int MAX_Y;      		//maximum vertical coordinate of screen
+int MAX_Y;      	//maximum vertical coordinate of screen
 int MIN_Y;			//minimum vertical coordinate of screen
 int max_xs;			//MAX_X for small screen
 int max_xm;			//MAX_X for medium screen
@@ -67,8 +67,8 @@ int max_yl;			//MAX_X for large screen
 int x, y;       		//head coordinates
 int x1, y1;     		//tail coordinates
 int x2, y2;     		//food coordinates
-int snaklen = 1;		//records length of the snake(to show score at end)
-int frame_width = 150;  	//sets default game speed
+int snaklen;		//records length of the snake(to show score at end)
+int frame_width = 150;  //sets default game speed
 int counter = 0;		//records the no. of times the game is played
 
 void main()
@@ -76,8 +76,6 @@ void main()
 	if(counter==0)
 	//FUNCTIONS TO RUN ONLY AT THE START OF THE PROGRAM//
 	{
-		system ("cd snake-~1");
-		system ("f5");
 		randomize();	//to seed the random() function in addfood()
 		screen();
 	}
@@ -85,6 +83,7 @@ void main()
 	int choice;
 	char choice2;
 	flag3:
+    snaklen = 1;
 	for(int l = 0; l<ARR_X; ++l)
 	{
 		for(int m = 0; m<ARR_Y; ++m)
@@ -412,7 +411,7 @@ void adjustxy(int &x, int &y)
 		y = MIN_Y;
 	else if (y == MIN_Y - 1)
 		y = MAX_Y;
-		if (x == MAX_X + 1)
+	if (x == MAX_X + 1)
 		x = MIN_X;
 	else if (x == MIN_X - 1)
 		x = MAX_X;
@@ -508,9 +507,10 @@ int checkfood()
 }
 int checkdie()
 {
+////IF POS_KEY[X][Y] IS ALREADY MAPPED WITH A////
+////DIRECTION VALUE WHEN THE HEAD REACHES (X, Y) COORDINATES////
 	if(pos_key[x][y]=='w' || pos_key[x][y]=='s' ||
-	   pos_key[x][y]=='a' || pos_key[x][y]=='d'   ) //IF POS_KEY[X][Y] IS ALREADY MAPPED WITH A DIRECTION//
-							//VALUE WHEN THE HEAD REACHES (X, Y) COORDINATES//
+	   pos_key[x][y]=='a' || pos_key[x][y]=='d'   ) 
 	{
 		return 1;
 	}
@@ -530,7 +530,7 @@ void printgameover()
 			{
 				textcolor(RED);
 				gotoxy((MAX_X - MIN_X + 1)/2 - 5 , (MAX_Y - MIN_Y + 1)/2);
-				cprintf("GAME OVER!!");
+				cprintf("GAME OVER!!\a");
 				textcolor(WHITE);
 				delay(400);
 				clrscr();   frame();
@@ -538,7 +538,7 @@ void printgameover()
 				++k;
 			}while(k<=4);
 			while(kbhit())		//to ignore keystrokes pressed while displaying game over//
-			{			//so that final score can be visible//
+			{			        //so that final score can be visible//
 				getch();
 			}
 			textcolor(RED);
