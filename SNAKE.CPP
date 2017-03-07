@@ -31,6 +31,8 @@
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 #include <iostream.h>
+#include <fstream.h>
+#include <string.h>
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
@@ -53,6 +55,7 @@ void screen();				//sets all screen parameters at the beginning of the program
 void frame();				//prints the borders of the screen
 int pause();				//manages pause option
 int select(int , int , int [], int);	//helps in option selection in the game menus with arrow keys
+void highscore(int);        //to print and modify highscores
 
 int MAX_X;			//maximum horizontal coordinate of screen
 int MIN_X;			//minimum horizontal coordinate of screen
@@ -83,7 +86,7 @@ void main()
 	int choice;
 	char choice2;
 	flag3:
-    snaklen = 1;
+	 snaklen = 1;
 	for(int l = 0; l<ARR_X; ++l)
 	{
 		for(int m = 0; m<ARR_Y; ++m)
@@ -93,7 +96,7 @@ void main()
 	}
 	clrscr();   frame();
 	_setcursortype(_NOCURSOR);
-	////////MAIN MENU/////////	
+	////////MAIN MENU/////////
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 6);
 	textcolor(YELLOW);
 	cprintf("********************");
@@ -113,10 +116,12 @@ void main()
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 2);
 	cout<<"3. Options";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 3);
-	cout<<"4. Exit";
+	cout<<"4. Highscores";
+	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 4);
+	cout<<"5. Exit";
 	/////////END OF MAIN MENU/////////
-	int pos_gap1[12] = {1, 1, 1, 1, -1};
-	choice = select((MAX_X - MIN_X + 1)/2 - 11, (MAX_Y - MIN_Y + 1)/2, pos_gap1, 4);
+	int pos_gap1[12] = {1, 1, 1, 1, 1, -1};
+	choice = select((MAX_X - MIN_X + 1)/2 - 11, (MAX_Y - MIN_Y + 1)/2, pos_gap1, 5);
 	switch (choice)
 	{
 		case 1 :
@@ -230,6 +235,9 @@ void main()
 			break;
 			////////END OF OPTIONS MENU/////////
 		case 4 :
+			highscore(0);
+			break;
+		case 5 :
 			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 - 1);
 			textcolor(LIGHTRED);
@@ -534,7 +542,7 @@ void printgameover()
 				textcolor(WHITE);
 				delay(400);
 				clrscr();   frame();
-				delay(600);
+				delay(400);
 				++k;
 			}while(k<=4);
 			while(kbhit())		//to ignore keystrokes pressed while displaying game over//
@@ -550,6 +558,8 @@ void printgameover()
 			gotoxy((MAX_X - MIN_X + 1)/2 - 12 , (MAX_Y - MIN_Y + 1)/2 + 2);
 			cout<<"Press any key to exit...";
 			getch();
+			while(kbhit()) { getch(); }
+			highscore(snaklen*10);
 			++counter;
 			main();
 		}
@@ -592,11 +602,11 @@ void screen()
 	MIN_X = (int) info.winleft + 1;
 	MAX_Y = (int) info.winbottom - 2;
 	MIN_Y = (int) info.wintop + 1;
-	max_xs = (int) MAX_X * 0.6;
-	max_xm = (int) MAX_X * 0.8;
+	max_xs = (int) MAX_X * 0.8;
+	max_xm = (int) MAX_X * 0.9;
 	max_xl = (int) MAX_X;
-	max_ys = (int) MAX_Y * 0.6;
-	max_ym = (int) MAX_Y * 0.8;
+	max_ys = (int) MAX_Y * 0.8;
+	max_ym = (int) MAX_Y * 0.9;
 	max_yl = (int) MAX_Y;
 	frame();
 	return;
@@ -695,8 +705,138 @@ int select(int x_opt, int y_opt, int pos_gap[], int totalgap)
 		}
 		else if(c==13)
 		{
-			return y_opt - y_init + 1;	//to return option value according 
+			return y_opt - y_init + 1;	//to return option value according
 							//to y coordinate of bullet
 		}
 	}while(1);
+}
+void highscore(int s)
+{
+	struct player_score
+	{
+		int difficulty;
+		int score;
+		char name[9];
+	}p_s[9];
+////INITIALIZING STRUCTURE TO AVOID GARBAGE VALUES////
+	for(int i = 0; i<9; ++i)
+	{
+		strcpy(p_s[i].name, "        ");
+		p_s[i].score = 0;
+	}
+	for(i = 0; i<9; ++i)
+	{
+		if(i<3)
+			p_s[i].difficulty = 150;
+		else if(i>=3 && i<6)
+			p_s[i].difficulty = 100;
+		else if(i>=6 && i<9)
+			p_s[i].difficulty = 50;
+	}
+////HIGHSCORES WILL BE STORED IN BINARY FILE 'HIGHSCOR'////
+	ifstream finout;
+	finout.open("HIGHSCOR", ios::in | ios::nocreate | ios::binary);
+////TO CREATE 'HIGHSCOR' FILE IF IT IS NOT PRESENT////
+	if(finout == 0)
+	{
+		ofstream ftemp;
+		ftemp.open("HIGHSCOR", ios::out | ios::binary);
+		for(int i = 0; i < 9; ++i)
+		{
+			ftemp.write((char *) &p_s[i], sizeof(player_score));
+		}
+		ftemp.close();
+		ifstream finout;
+		finout.open("HIGHSCOR", ios::in | ios::nocreate | ios::binary);
+	}
+	for(i = 0; i < 9; ++i)
+	{
+		finout.read((char *) &p_s[i] , sizeof(player_score));
+	}
+	finout.close();
+	int line_no, j = 2;
+	if(s != 0)
+	{
+		int j = 2;
+		while(p_s[j].difficulty != frame_width)
+		{
+			j = j + 3;
+		}
+		for(int i = j - 2; s < p_s[i].score; ++i){}
+		if(i>j){ return; }
+		line_no = i;
+		while(j > line_no)
+		{
+			p_s[j] = p_s[j-1];
+			--j;
+		}
+		p_s[line_no].score = s;
+	}
+////////////////////HIGHSCORES PAGE/////////////////////
+	clrscr();  frame();
+	gotoxy((MAX_X - MIN_X + 1)/2 - 5, (MAX_Y - MIN_Y + 1)/2 - 7);
+	textcolor(YELLOW);
+	cprintf("HIGHSCORES");
+	textcolor(WHITE);
+	gotoxy((MAX_X - MIN_X + 1)/2 - 17, (MAX_Y - MIN_Y + 1)/2 - 5);
+	cout<<"EASY:  ";
+	for(i = 0; i < 3; ++i)
+	{
+		gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 5 + i);
+		cout<<i+1<<". ";
+		for(int j = 0; j<8; ++j)
+			cout.put(p_s[i].name[j]);
+		cout<<"    "<<p_s[i].score;
+	}
+	gotoxy((MAX_X - MIN_X + 1)/2 - 19, (MAX_Y - MIN_Y + 1)/2 - 1);
+	cout<<"MEDIUM:  ";
+	for(i = 3; i < 6; ++i)
+	{
+		gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 4 + i);
+		cout<<i+1<<". ";
+		for(int j = 0; j<8; ++j)
+			cout.put(p_s[i].name[j]);
+		cout<<"    "<<p_s[i].score;
+	}
+	gotoxy((MAX_X - MIN_X + 1)/2 - 17, (MAX_Y - MIN_Y + 1)/2 + 3);
+	cout<<"HARD:  ";
+	for(i = 6; i < 9; ++i)
+	{
+		gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 3 + i);
+		cout<<i+1<<". ";
+		for(int j = 0; j<8; ++j)
+			cout.put(p_s[i].name[j]);
+		cout<<"    "<<p_s[i].score;
+	}
+	if(s == 0)
+	{
+		finout.close();
+		gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
+		cout<<"Press any key to go back to main menu...";
+		getch();
+	}
+	else
+	{
+        gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
+		cout<<"Enter your name...";
+        _setcursortype(_SOLIDCURSOR);
+		char name[8];
+		for(int i = 0; p_s[i].difficulty != frame_width; i = i + 3){}
+		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
+		cout<<"        ";
+		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
+		cin.get(name, 9);
+		cin.ignore(1000, '\n');
+		strcpy(p_s[line_no].name, "        ");
+		strcpy(p_s[line_no].name, name);
+		_setcursortype(_NOCURSOR);
+		ofstream finout;
+		finout.open("HIGHSCOR", ios::out | ios::binary);
+		for(i = 0; i < 9; ++i)
+		{
+			finout.write((char *) &p_s[i] , sizeof(player_score));
+		}
+		finout.close();
+	}
+
 }
