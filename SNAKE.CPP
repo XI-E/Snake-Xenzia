@@ -3,7 +3,7 @@
 			SNAKE XENZIA
 			------------
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	This is a basic snake game which is commonly 
+	This is a basic snake game which is commonly
 	found in old nokia phones. This game has a
 	snake the player has to move with the arrow 
 	keys. There will be food particles generated 
@@ -37,12 +37,12 @@
 #include <dos.h>
 #include <stdlib.h>
 
-#define ARR_X 200
-#define ARR_Y 200	//dimensions of pos_key matrix
+#define ARR_X 100
+#define ARR_Y 100	//dimensions of pos_key matrix
 
 char pos_key[ARR_X][ARR_Y];	//matrix corresponding to every position on the screen
 
-void keystroke();			//function which receives and maps keystrokes and decides the corresponding movement
+void keystroke(int);			//function which receives and maps keystrokes and decides the corresponding movement
 void adjustxy(int&, int&);	//helps in swapping screen sides when snake reaches one edge of screen
 void movehead(int, int);	//prints the head of the snake
 void movetail(char [ARR_X][ARR_Y]);	//replaces the last element of the snake with " "
@@ -56,23 +56,25 @@ void frame();				//prints the borders of the screen
 int pause();				//manages pause option
 int select(int , int , int [], int);	//helps in option selection in the game menus with arrow keys
 void highscore(int);        //to print and modify highscores
+void continuegame(int, char &); //to continue a previously incomplete game
 
-int MAX_X;			//maximum horizontal coordinate of screen
-int MIN_X;			//minimum horizontal coordinate of screen
-int MAX_Y;      	//maximum vertical coordinate of screen
-int MIN_Y;			//minimum vertical coordinate of screen
-int max_xs;			//MAX_X for small screen
-int max_xm;			//MAX_X for medium screen
-int max_xl;			//MAX_X for large screen
-int max_ys;			//MAX_X for small screen
-int max_ym;			//MAX_X for medium screen
-int max_yl;			//MAX_X for large screen
+int MAX_X;			    //maximum horizontal coordinate of screen
+int MIN_X;			    //minimum horizontal coordinate of screen
+int MAX_Y;      	    //maximum vertical coordinate of screen
+int MIN_Y;			    //minimum vertical coordinate of screen
+int max_xs;			    //MAX_X for small screen
+int max_xm;			    //MAX_X for medium screen
+int max_xl;			    //MAX_X for large screen
+int max_ys;			    //MAX_X for small screen
+int max_ym;			    //MAX_X for medium screen
+int max_yl;			    //MAX_X for large screen
 int x, y;       		//head coordinates
 int x1, y1;     		//tail coordinates
 int x2, y2;     		//food coordinates
-int snaklen;		//records length of the snake(to show score at end)
+int snaklen;		    //records length of the snake(to show score at end)
 int frame_width = 150;  //sets default game speed
 int counter = 0;		//records the no. of times the game is played
+int savedgamestatus;    //records if a saved game is present or not
 
 void main()
 {
@@ -81,12 +83,13 @@ void main()
 	{
 		randomize();	//to seed the random() function in addfood()
 		screen();
+		continuegame(2, 'k');
 	}
 ///////WELCOME SCREEN//////////
 	int choice;
 	char choice2;
 	flag3:
-	 snaklen = 1;
+	snaklen = 1;
 	for(int l = 0; l<ARR_X; ++l)
 	{
 		for(int m = 0; m<ARR_Y; ++m)
@@ -109,28 +112,36 @@ void main()
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 2);
 	cprintf("********************");
 	textcolor(WHITE);
+	if(!savedgamestatus)        //if a saved game is not present
+	{	textcolor(DARKGRAY);	}
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2);
-	cout<<"1. Play";
+	cprintf("1. Continue");
+	textcolor(WHITE);
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 1);
-	cout<<"2. Controls";
+	cout<<"2. New Game";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 2);
-	cout<<"3. Options";
+	cout<<"3. Controls";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 3);
-	cout<<"4. Highscores";
+	cout<<"4. Options";
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 4);
-	cout<<"5. Exit";
+	cout<<"5. Highscores";
+	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 5);
+	cout<<"6. Exit";
 	/////////END OF MAIN MENU/////////
-	int pos_gap1[12] = {1, 1, 1, 1, 1, -1};
-	choice = select((MAX_X - MIN_X + 1)/2 - 11, (MAX_Y - MIN_Y + 1)/2, pos_gap1, 5);
+	int pos_gap1[12] = {1, 1, 1, 1, 1, 1, -1};
+	choice = select((MAX_X - MIN_X + 1)/2 - 11, (MAX_Y - MIN_Y + 1)/2, pos_gap1, 6);
 	switch (choice)
 	{
 		case 1 :
+			if(savedgamestatus) keystroke(1);
+			break;
+		case 2 :
 			clrscr();   frame();
 			x = (MAX_X - MIN_X + 1)/2, y = (MAX_Y - MIN_Y + 1)/2;
 			addfood();
-			keystroke();
+			keystroke(0);
 			break;
-		case 2 :
+		case 3 :
 			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 3, (MAX_Y - MIN_Y + 1)/2 - 3);
 			textcolor(YELLOW);
@@ -144,7 +155,7 @@ void main()
 			cout<<"Press any key to return to main menu...";
 			getch();
 			goto flag3;
-		case 3 :
+		case 4 :
 			flag4:
 			clrscr();   frame();
 			////////OPTIONS MENU////////
@@ -234,10 +245,10 @@ void main()
 			}
 			break;
 			////////END OF OPTIONS MENU/////////
-		case 4 :
+		case 5 :
 			highscore(0);
 			break;
-		case 5 :
+		case 6 :
 			clrscr();   frame();
 			gotoxy((MAX_X - MIN_X + 1)/2 - 15, (MAX_Y - MIN_Y + 1)/2 - 1);
 			textcolor(LIGHTRED);
@@ -261,11 +272,15 @@ void main()
   /////END OF MAIN/////
 }
 
-void keystroke()
+void keystroke(int tocontinue)//tocontinue: determines whether to continue a saved game or not
 {
 	flag:
 	movehead(x, y);			//to show initial direction of the snake
-	char c0, c = getdir();
+	char c0, c;
+	if(tocontinue == 0)
+	{	c = getdir();	}
+	else
+	{	c = 'w';       }
 	//TO SET INITIAL TAIL COORDINATES//
 	switch(c)
 	{
@@ -298,7 +313,16 @@ void keystroke()
 			goto flag;
 	}
 	pos_key[x1][y1] = c;
-	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD// 
+	if(tocontinue != 0)
+	{
+		continuegame(1, c);
+		if(pause())
+		{
+			continuegame(0, c);
+			return;
+		}
+	}
+	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD//
 	//CORRESPONDING TO ITS POSITION AND CALL MOVEHEAD() AND MOVETAIL()  //
 	flag2:
 		switch(c)
@@ -358,6 +382,7 @@ void keystroke()
 		{
 			if(pause())
 			{
+				continuegame(0, c);
 				return;
 			}
 			else
@@ -518,7 +543,7 @@ int checkdie()
 ////IF POS_KEY[X][Y] IS ALREADY MAPPED WITH A////
 ////DIRECTION VALUE WHEN THE HEAD REACHES (X, Y) COORDINATES////
 	if(pos_key[x][y]=='w' || pos_key[x][y]=='s' ||
-	   pos_key[x][y]=='a' || pos_key[x][y]=='d'   ) 
+		pos_key[x][y]=='a' || pos_key[x][y]=='d'   )
 	{
 		return 1;
 	}
@@ -839,4 +864,85 @@ void highscore(int s)
 		finout.close();
 	}
 
+}
+void continuegame(int read, char &c)
+//if read == 1, then game status is loaded from file//
+//if read == 0, then game status is saved to file//
+//else, savedgamestatus is read from file and set in the program//
+{
+	struct game_status
+	{
+		int x, y, x1, y1, x2, y2, snaklen, frame_width, MAX_X, MIN_X, MAX_Y, MIN_Y;
+		char pos_key[ARR_X][ARR_Y], c;
+		char screen[10000];		//stores the complete game screen
+		int savedgamestatus;
+	}g_s;
+	if(read == 0)
+	{
+		g_s.x = x;
+		g_s.y = y;
+		g_s.x1 = x1;
+		g_s.y1 = y1;
+		g_s.x2 = x2;
+		g_s.y2 = y2;
+		g_s.snaklen = snaklen;
+		g_s.frame_width = frame_width;
+		g_s.MAX_X = MAX_X;
+		g_s.MIN_X = MIN_X;
+		g_s.MAX_Y = MAX_Y;
+		g_s.MIN_Y = MIN_Y;
+		for(int i = 0; i < ARR_X; ++i)
+			for(int j = 0; j < ARR_Y; ++j)
+			{	g_s.pos_key[i][j] = pos_key[i][j];	}
+		g_s.c = c;
+		gettext(::MIN_X - 1, ::MIN_Y - 1, ::MAX_X + 1, ::MAX_Y + 1, g_s.screen);
+		g_s.savedgamestatus = savedgamestatus = 1;
+		ofstream fout;
+		fout.open("SAVEGAME", ios::out | ios::binary);
+		fout.write((char *) &g_s, sizeof(game_status));
+		fout.close();
+	}
+	else if (read == 1)
+	{
+		ifstream fin;
+		fin.open("SAVEGAME", ios::in | ios::binary);
+		fin.read((char *) &g_s, sizeof(game_status));
+		fin.close();
+		x = g_s.x;
+		y = g_s.y;
+		x1 = g_s.x1;
+		y1 = g_s.y1;
+		x2 = g_s.x2;
+		y2 = g_s.y2;
+		snaklen = g_s.snaklen;
+		frame_width = g_s.frame_width;
+		MAX_X = g_s.MAX_X;
+		MIN_X = g_s.MIN_X;
+		MAX_Y = g_s.MAX_Y;
+		MIN_Y = g_s.MIN_Y;
+		for(int i = 0; i < ARR_X; ++i)
+			for(int j = 0; j < ARR_Y; ++j)
+			{	pos_key[i][j] = g_s.pos_key[i][j];	}
+		c = g_s.c;
+		clrscr();
+		puttext(::MIN_X - 1, ::MIN_Y - 1, ::MAX_X + 1, ::MAX_Y + 1, g_s.screen);
+		savedgamestatus = g_s.savedgamestatus = 0;
+		ofstream fout;
+		fout.open("SAVEGAME", ios::out | ios::binary);
+		fout.write((char *) & g_s, sizeof(game_status));
+		fout.close();
+	}
+	else
+	{
+		ifstream fin;
+		fin.open("SAVEGAME", ios::in | ios::binary | ios::nocreate);
+		if(fin == 0)
+		{
+			savedgamestatus = 0;
+			return;
+		}
+		fin.read((char *) &g_s, sizeof(game_status));
+		fin.close();
+		savedgamestatus = g_s.savedgamestatus;
+	}
 }
