@@ -7,7 +7,7 @@
 	found in old nokia phones. This game has a
 	snake the player has to move with the arrow 
 	keys. There will be food particles generated 
-	on the screen from time to time. When the 
+	on the screen from time to time. When the
 	snake eats them, its length increases. The 
 	game ends when the snake bits its own body.
 	The player's objective is to get the highest
@@ -320,6 +320,10 @@ void keystroke(int tocontinue)//tocontinue: determines whether to continue a sav
 		{
 			continuegame(0, c);
 			return;
+		}
+		if(kbhit())
+		{
+			c = getdir();
 		}
 	}
 	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD//
@@ -675,6 +679,11 @@ int pause()
 	{
 		return 1;
 	}
+	else if (ch == 0)
+	{
+		ungetch(0);	//so that arrow keys may be responded to by keystroke when pressed during pause()
+		return 0;
+	}
 	else
 	{
 		return 0;
@@ -842,16 +851,36 @@ void highscore(int s)
 	}
 	else
 	{
-        gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
+		  gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
 		cout<<"Enter your name...";
-        _setcursortype(_SOLIDCURSOR);
+		  _setcursortype(_SOLIDCURSOR);
 		char name[8];
 		for(int i = 0; p_s[i].difficulty != frame_width; i = i + 3){}
 		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
 		cout<<"        ";
 		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
-		cin.get(name, 9);
-		cin.ignore(1000, '\n');
+		for(i = 0;; ++i)
+		{
+			name[i] = getch();
+			if(name[i] == 13)
+			{
+				name[i] = '\0';
+				break;
+			}
+			else if(name[i] == 8)
+			{
+				name[i-1]=' ';
+				cout<<'\b'<<' '<<'\b';
+				i = i - 2;
+				continue;
+			}
+			if(i<8)
+				cout<<name[i];
+			else if(i == 8)
+			{
+				--i;
+			}
+		}
 		strcpy(p_s[line_no].name, "        ");
 		strcpy(p_s[line_no].name, name);
 		_setcursortype(_NOCURSOR);

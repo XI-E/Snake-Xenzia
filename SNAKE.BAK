@@ -7,7 +7,7 @@
 	found in old nokia phones. This game has a
 	snake the player has to move with the arrow 
 	keys. There will be food particles generated 
-	on the screen from time to time. When the 
+	on the screen from time to time. When the
 	snake eats them, its length increases. The 
 	game ends when the snake bits its own body.
 	The player's objective is to get the highest
@@ -56,25 +56,25 @@ void frame();				//prints the borders of the screen
 int pause();				//manages pause option
 int select(int , int , int [], int);	//helps in option selection in the game menus with arrow keys
 void highscore(int);        //to print and modify highscores
-void continuegame(int, char &);
+void continuegame(int, char &); //to continue a previously incomplete game
 
-int MAX_X;			//maximum horizontal coordinate of screen
-int MIN_X;			//minimum horizontal coordinate of screen
-int MAX_Y;      	//maximum vertical coordinate of screen
-int MIN_Y;			//minimum vertical coordinate of screen
-int max_xs;			//MAX_X for small screen
-int max_xm;			//MAX_X for medium screen
-int max_xl;			//MAX_X for large screen
-int max_ys;			//MAX_X for small screen
-int max_ym;			//MAX_X for medium screen
-int max_yl;			//MAX_X for large screen
+int MAX_X;			    //maximum horizontal coordinate of screen
+int MIN_X;			    //minimum horizontal coordinate of screen
+int MAX_Y;      	    //maximum vertical coordinate of screen
+int MIN_Y;			    //minimum vertical coordinate of screen
+int max_xs;			    //MAX_X for small screen
+int max_xm;			    //MAX_X for medium screen
+int max_xl;			    //MAX_X for large screen
+int max_ys;			    //MAX_X for small screen
+int max_ym;			    //MAX_X for medium screen
+int max_yl;			    //MAX_X for large screen
 int x, y;       		//head coordinates
 int x1, y1;     		//tail coordinates
 int x2, y2;     		//food coordinates
-int snaklen;		//records length of the snake(to show score at end)
+int snaklen;		    //records length of the snake(to show score at end)
 int frame_width = 150;  //sets default game speed
 int counter = 0;		//records the no. of times the game is played
-int savedgamestatus;
+int savedgamestatus;    //records if a saved game is present or not
 
 void main()
 {
@@ -112,7 +112,7 @@ void main()
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 - 2);
 	cprintf("********************");
 	textcolor(WHITE);
-	if(!savedgamestatus)
+	if(!savedgamestatus)        //if a saved game is not present
 	{	textcolor(DARKGRAY);	}
 	gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2);
 	cprintf("1. Continue");
@@ -272,7 +272,7 @@ void main()
   /////END OF MAIN/////
 }
 
-void keystroke(int tocontinue)
+void keystroke(int tocontinue)//tocontinue: determines whether to continue a saved game or not
 {
 	flag:
 	movehead(x, y);			//to show initial direction of the snake
@@ -320,6 +320,10 @@ void keystroke(int tocontinue)
 		{
 			continuegame(0, c);
 			return;
+		}
+		if(kbhit())
+		{
+			c = getdir();
 		}
 	}
 	//LOOPS TO SET HEAD COORDINATES, MAP THE DIRECTION VALUE OF THE HEAD//
@@ -675,6 +679,11 @@ int pause()
 	{
 		return 1;
 	}
+	else if (ch == 0)
+	{
+		ungetch(0);	//so that arrow keys may be responded to by keystroke when pressed during pause()
+		return 0;
+	}
 	else
 	{
 		return 0;
@@ -842,16 +851,36 @@ void highscore(int s)
 	}
 	else
 	{
-        gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
+		  gotoxy((MAX_X - MIN_X + 1)/2 - 10, (MAX_Y - MIN_Y + 1)/2 + 7);
 		cout<<"Enter your name...";
-        _setcursortype(_SOLIDCURSOR);
+		  _setcursortype(_SOLIDCURSOR);
 		char name[8];
 		for(int i = 0; p_s[i].difficulty != frame_width; i = i + 3){}
 		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
 		cout<<"        ";
 		gotoxy((MAX_X - MIN_X + 1)/2 - 7, line_no + (i / 3) + (MAX_Y - MIN_Y + 1)/2 - 5);
-		cin.get(name, 9);
-		cin.ignore(1000, '\n');
+		for(i = 0;; ++i)
+		{
+			name[i] = getch();
+			if(name[i] == 13)
+			{
+				name[i] = '\0';
+				break;
+			}
+			else if(name[i] == 8)
+			{
+				name[i-1]=' ';
+				cout<<'\b'<<' '<<'\b';
+				i = i - 2;
+				continue;
+			}
+			if(i<8)
+				cout<<name[i];
+			else if(i == 8)
+			{
+				--i;
+			}
+		}
 		strcpy(p_s[line_no].name, "        ");
 		strcpy(p_s[line_no].name, name);
 		_setcursortype(_NOCURSOR);
@@ -866,12 +895,15 @@ void highscore(int s)
 
 }
 void continuegame(int read, char &c)
+//if read == 1, then game status is loaded from file//
+//if read == 0, then game status is saved to file//
+//else, savedgamestatus is read from file and set in the program//
 {
 	struct game_status
 	{
 		int x, y, x1, y1, x2, y2, snaklen, frame_width, MAX_X, MIN_X, MAX_Y, MIN_Y;
 		char pos_key[ARR_X][ARR_Y], c;
-		char screen[10000];
+		char screen[10000];		//stores the complete game screen
 		int savedgamestatus;
 	}g_s;
 	if(read == 0)
