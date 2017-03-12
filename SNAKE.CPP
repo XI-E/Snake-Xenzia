@@ -36,6 +36,7 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
+#include <stdio.h>  //for remove()
 
 #define ARR_X 100
 #define ARR_Y 100	//dimensions of pos_key matrix
@@ -897,14 +898,13 @@ void highscore(int s)
 void continuegame(int read, char &c)
 //if read == 1, then game status is loaded from file//
 //if read == 0, then game status is saved to file//
-//else, savedgamestatus is read from file and set in the program//
+//else, savedgamestatus is set in the program//
 {
 	struct game_status
 	{
 		int x, y, x1, y1, x2, y2, snaklen, frame_width, MAX_X, MIN_X, MAX_Y, MIN_Y;
 		char pos_key[ARR_X][ARR_Y], c;
 		char screen[10000];		//stores the complete game screen
-		int savedgamestatus;
 	}g_s;
 	if(read == 0)
 	{
@@ -925,7 +925,7 @@ void continuegame(int read, char &c)
 			{	g_s.pos_key[i][j] = pos_key[i][j];	}
 		g_s.c = c;
 		gettext(::MIN_X - 1, ::MIN_Y - 1, ::MAX_X + 1, ::MAX_Y + 1, g_s.screen);
-		g_s.savedgamestatus = savedgamestatus = 1;
+		savedgamestatus = 1;
 		ofstream fout;
 		fout.open("SAVEGAME", ios::out | ios::binary);
 		fout.write((char *) &g_s, sizeof(game_status));
@@ -955,11 +955,8 @@ void continuegame(int read, char &c)
 		c = g_s.c;
 		clrscr();
 		puttext(::MIN_X - 1, ::MIN_Y - 1, ::MAX_X + 1, ::MAX_Y + 1, g_s.screen);
-		savedgamestatus = g_s.savedgamestatus = 0;
-		ofstream fout;
-		fout.open("SAVEGAME", ios::out | ios::binary);
-		fout.write((char *) & g_s, sizeof(game_status));
-		fout.close();
+		savedgamestatus = 0;
+		remove("SAVEGAME");
 	}
 	else
 	{
@@ -968,10 +965,10 @@ void continuegame(int read, char &c)
 		if(fin == 0)
 		{
 			savedgamestatus = 0;
-			return;
 		}
-		fin.read((char *) &g_s, sizeof(game_status));
-		fin.close();
-		savedgamestatus = g_s.savedgamestatus;
+		else
+		{
+			savedgamestatus = 1;
+		}
 	}
 }
